@@ -3,8 +3,10 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use axum::extract::Extension;
-use axum::prelude::*;
+use axum::handler::get;
+use axum::response::Html;
 use axum::AddExtensionLayer;
+use axum::Router;
 use handlebars::Handlebars;
 use hyper::Server;
 use metriki_core::MetricsRegistry;
@@ -13,7 +15,7 @@ use metriki_tower::http::HyperMetricsLayerBuilder;
 use openweathermap::weather;
 use serde_json::json;
 
-async fn weather_index(Extension(hbs): Extension<Arc<Handlebars<'_>>>) -> response::Html<String> {
+async fn weather_index(Extension(hbs): Extension<Arc<Handlebars<'_>>>) -> Html<String> {
     let api_key = env::var("WEATHERAPP_API_KEY").unwrap();
     let weather = weather("Beijing,CN", "metric", "en", &api_key)
         .await
@@ -27,7 +29,7 @@ async fn weather_index(Extension(hbs): Extension<Arc<Handlebars<'_>>>) -> respon
         )
         .unwrap();
 
-    response::Html(html)
+    Html(html)
 }
 
 #[tokio::main]
@@ -47,7 +49,8 @@ async fn main() {
     log_reporter.start();
 
     let hbs = Arc::new(hbs);
-    let app = route("/", get(weather_index))
+    let app = Router::new()
+        .route("/", get(weather_index))
         .layer(AddExtensionLayer::new(hbs))
         .layer(
             HyperMetricsLayerBuilder::default()
