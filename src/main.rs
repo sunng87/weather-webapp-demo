@@ -10,6 +10,7 @@ use axum::Router;
 use handlebars::Handlebars;
 use hyper::Server;
 use metriki_core::MetricsRegistry;
+use metriki_influxdb_reporter::InfluxDbReporterBuilder;
 use metriki_log_reporter::LogReporterBuilder;
 use metriki_tower::http::HyperMetricsLayerBuilder;
 use openweathermap::weather;
@@ -47,6 +48,15 @@ async fn main() {
         .build()
         .unwrap();
     log_reporter.start();
+
+    InfluxDbReporterBuilder::default()
+        .registry(metriki.clone())
+        .url("127.0.0.1:9009")
+        .database("qdb")
+        .interval_secs(10)
+        .build()
+        .unwrap()
+        .start();
 
     let hbs = Arc::new(hbs);
     let app = Router::new()
