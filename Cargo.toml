@@ -9,7 +9,7 @@ edition = "2018"
 openweathermap = "0.2"
 handlebars = "4"
 tokio = { version = "1", features = ["full"] }
-axum = "0.2"
+axum = "0.4"
 # metriki-core = { path = "../metriki/metriki-core" }
 # metriki-tower = { path = "../metriki/metriki-tower", features = ["http"] }
 # metriki-log-reporter = { path = "../metriki/metriki-log-reporter" }

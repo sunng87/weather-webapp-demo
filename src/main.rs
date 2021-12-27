@@ -3,8 +3,8 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 use axum::extract::Extension;
-use axum::handler::get;
 use axum::response::Html;
+use axum::routing::get;
 use axum::AddExtensionLayer;
 use axum::Router;
 use handlebars::Handlebars;
